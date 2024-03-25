@@ -113,6 +113,7 @@ exports.createReview = async (req, res, next) => {
 
         // Add userId to req.body
         req.body.user = req.user.id;
+        req.body.userName = req.user.name;
 
         // Check for existed review
         const existedReviews = await Review.find({user:req.user.id});

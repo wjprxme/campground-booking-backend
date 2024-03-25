@@ -14,8 +14,13 @@ const ReviewSchema = new mongoose.Schema({
         ref: 'Campground',
         required: [true, 'Please add a campground name']
     },
-    user: {
+    userId: {
         type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: [true, 'Please add an user name']
+    },
+    userName: {
+        type: String,
         ref: 'User',
         required: [true, 'Please add an user name']
     },
