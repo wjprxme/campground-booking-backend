@@ -5,6 +5,10 @@ const ReviewSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a review']
     },
+    rating: {
+        type: Number,
+        required: [true, 'Please add a rating']
+    },
     campground: {
         type: mongoose.Schema.ObjectId,
         ref: 'Campground',
