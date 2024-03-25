@@ -38,7 +38,7 @@ exports.getCampgrounds= async (req,res,next) =>{
 
     // Pagination
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 5;
+    const limit = parseInt(req.query.limit, 10);
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
    
