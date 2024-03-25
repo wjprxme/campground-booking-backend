@@ -5,30 +5,19 @@ const Campground =require('../models/Campground');
 // @routes  GET /api/v1/reviews
 // @access  Private
 exports.getReviews = async (req, res, next) => {
-    let query;
-    // General users can see only their reviews!
-    if (req.user.role !== 'admin') {
-        query = Review.find({user: req.user.id}).populate({
+    if (req.params.campgroundId) {
+        console.log(req.params.campgroundId);
+
+        query = Review.find({campground: req.params.campgroundId}).populate({
             path: 'campground',
             select: 'name address telephoneNumber'
         });
     }
     else {
-        // If you are an admin, you can see all review!
-        if (req.params.campgroundId) {
-            console.log(req.params.campgroundId);
-
-            query = Review.find({campground: req.params.campgroundId}).populate({
-                path: 'campground',
-                select: 'name address telephoneNumber'
-            });
-        }
-        else {
-            query = Review.find().populate({
-                path: 'campground',
-                select: 'name address telephoneNumber'
-            });
-        }
+        query = Review.find().populate({
+            path: 'campground',
+            select: 'name address telephoneNumber'
+        });
     }
     try {
         const reviews = await query;
@@ -45,32 +34,13 @@ exports.getReviews = async (req, res, next) => {
             message: 'Cannot find review'
         });
     }
-};
+}
 
 
-// @desc    Get Review For Each Campground
-// @route   GET /api/v1/reviews/:campgroundId
-// @access  Private
-// exports.getReview = async (req, res, next) => {
-//     try {
-//         const reviews = await Review.find({ campground: req.params.campgroundId}).populate({
-//             path: 'campground',
-//             select: 'name address telephoneNumber'
-//         });
 
-//         res.status(200).json({
-//             success: true,
-//             count: reviews.length,
-//             data: reviews
-//         });
-//     } catch (error) {
-//         console.log(error.stack);
-//         return res.status(500).json({
-//             success: false,
-//             message: 'Cannot find reviews for the campground'
-//         });
-//     }
-// }
+// // @desc    Get Review For Each Campground
+// // @route   GET /api/v1/reviews/:campgroundId
+// // @access  Private
 
 exports.getReview = async (req, res, next) => {
     let query = Review.find({campground: req.params.id}).populate({

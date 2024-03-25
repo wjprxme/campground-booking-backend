@@ -12,17 +12,12 @@ const ReviewSchema = new mongoose.Schema({
     campground: {
         type: mongoose.Schema.ObjectId,
         ref: 'Campground',
-        required: [true, 'Please add a campground name']
+        required: [true, 'Please add a campground id']
     },
-    userId: {
+    user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'Please add an user name']
-    },
-    userName: {
-        type: String,
-        ref: 'User',
-        required: [true, 'Please add an user name']
+        required: [true, 'Please add an user id']
     },
     createdAt: {
         type: Date,
