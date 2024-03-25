@@ -53,12 +53,12 @@ exports.getReviews = async (req, res, next) => {
 // @access  Private
 exports.getReview = async (req, res, next) => {
     try {
-        const review = await Review.findById(req.params.id).populate({
+        const campground = await Review.find({campground: req.params.campgroundId}).populate({
             path: 'campground',
             select: 'name address telephoneNumber'
         });
 
-        if (!review) {
+        if (!campground) {
             return res.status(404).json({
                 success: false,
                 message: `No review with the id of ${req.params.id}`
@@ -67,7 +67,7 @@ exports.getReview = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            data: review
+            data: campground
         })
     }
     catch (error) {
