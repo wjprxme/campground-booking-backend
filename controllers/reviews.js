@@ -48,36 +48,52 @@ exports.getReviews = async (req, res, next) => {
 };
 
 
-// @desc    Get Single Review
-// @route   GET /api/v1/reviews:id
+// @desc    Get Review For Each Campground
+// @route   GET /api/v1/reviews/:campgroundId
 // @access  Private
+// exports.getReview = async (req, res, next) => {
+//     try {
+//         const reviews = await Review.find({ campground: req.params.campgroundId}).populate({
+//             path: 'campground',
+//             select: 'name address telephoneNumber'
+//         });
+
+//         res.status(200).json({
+//             success: true,
+//             count: reviews.length,
+//             data: reviews
+//         });
+//     } catch (error) {
+//         console.log(error.stack);
+//         return res.status(500).json({
+//             success: false,
+//             message: 'Cannot find reviews for the campground'
+//         });
+//     }
+// }
+
 exports.getReview = async (req, res, next) => {
+    let query = Review.find({campground: req.params.id}).populate({
+        path: 'campground',
+        select: 'name address telephoneNumber'
+    });
     try {
-        const campground = await Review.find({campground: req.params.campgroundId}).populate({
-            path: 'campground',
-            select: 'name address telephoneNumber'
-        });
-
-        if (!campground) {
-            return res.status(404).json({
-                success: false,
-                message: `No review with the id of ${req.params.id}`
-            });
-        }
-
+        const reviews = await query;
         res.status(200).json({
             success: true,
-            data: campground
-        })
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: 'Cannot find review'
+            count: reviews.length,
+            data: reviews
         });
     }
-}
+    catch (error) {
+        console.log(error.stack);
+        return res.status(500).json({
+            success: false, 
+            message: 'Cannot find booking'
+        });
+    }
+};
+
 
 // @desc    Create Single review
 // @route   POST /api/v1/campgrounds/:campgroundId/review
