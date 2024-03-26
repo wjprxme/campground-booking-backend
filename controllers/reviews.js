@@ -80,11 +80,11 @@ exports.createReview = async (req, res, next) => {
                 message: `No campground with the id of ${campgroundId}`
             });
         }
-
+        
         // Check if the user has already reviewed this campground
         const existingReview = await Review.findOne({ user: req.user.id, campground: campgroundId });
 
-        if (existingReview) {
+        if (existingReview && req.user.role !== 'admin') {
             return res.status(400).json({
                 success: false,
                 message: `You have already reviewed this campground`
