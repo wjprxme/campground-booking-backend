@@ -3,7 +3,7 @@ const Campground =require('../models/Campground');
 
 // @desc    Get All Reviews
 // @routes  GET /api/v1/reviews
-// @access  Private
+// @access  Public
 exports.getReviews = async (req, res, next) => {
     if (req.params.campgroundId) {
         console.log(req.params.campgroundId);
@@ -40,7 +40,7 @@ exports.getReviews = async (req, res, next) => {
 
 // // @desc    Get Review For Each Campground
 // // @route   GET /api/v1/reviews/:campgroundId
-// // @access  Private
+// // @access  Public
 
 exports.getReview = async (req, res, next) => {
     let query = Review.find({campground: req.params.id}).populate({
@@ -70,31 +70,31 @@ exports.getReview = async (req, res, next) => {
 // @access  Private
 exports.createReview = async (req, res, next) => {
     try {
-        req.body.campground = req.params.campgroundId;
+        const campgroundId = req.params.campgroundId;
 
-        const campground = await Campground.findById(req.body.campground);
+        const campground = await Campground.findById(campgroundId);
 
         if (!campground) {
             return res.status(404).json({
                 success: false,
-                message: `No campground with the id of ${req.params.campgroundId}`
+                message: `No campground with the id of ${campgroundId}`
+            });
+        }
+
+        // Check if the user has already reviewed this campground
+        const existingReview = await Review.findOne({ user: req.user.id, campground: campgroundId });
+
+        if (existingReview) {
+            return res.status(400).json({
+                success: false,
+                message: `You have already reviewed this campground`
             });
         }
 
         // Add userId to req.body
+        req.body.campground = campgroundId;
         req.body.user = req.user.id;
         req.body.userName = req.user.name;
-
-        // Check for existed review
-        const existedReviews = await Review.find({user:req.user.id});
-
-        // If the user is not an admin, they can only create 1 review.
-        if (existedReviews.length >= 1 && req.user.role !== 'admin') {
-            return res.status(400).json({
-                success: false, 
-                message : `The user with ID ${req.user.id} has already made 1 review`
-            });
-        }
 
         const review = await Review.create(req.body);
 
